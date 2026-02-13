@@ -1,0 +1,6 @@
+package com.ey.journey_service.entity;
+
+public enum SeatClass {
+    BUSINESS,
+    ECONOMY
+}
