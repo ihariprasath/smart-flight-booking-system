@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9576dfbb-c0cc-43d7-8e3b-8edba5ad398d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/dto/SeatInfoResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/dto/SeatInfoResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/exception/GlobalExceptionHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/client/JourneyClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/client/JourneyClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/dto/PassengerRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/dto/PassengerRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/entity/Booking.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/entity/Booking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/service/BookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/service/BookingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/controller/JourneyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/controller/JourneyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/repository/JourneySeatRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/repository/JourneySeatRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/dto/BookingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-service/src/main/java/com/ey/booking_service/dto/BookingRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/service/JourneyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/journey-service/src/main/java/com/ey/journey_service/service/JourneyService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pricing-service/src/main/java/com/ey/pricing_service/controller/PricingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pricing-service/src/main/java/com/ey/pricing_service/controller/PricingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pricing-service/src/main/java/com/ey/pricing_service/service/PricingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pricing-service/src/main/java/com/ey/pricing_service/service/PricingService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

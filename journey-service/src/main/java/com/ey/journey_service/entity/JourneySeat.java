@@ -36,5 +36,4 @@ public class JourneySeat {
     private LocalDateTime lockedUntil;
 
     private Long lockedByBookingId;
-
 }

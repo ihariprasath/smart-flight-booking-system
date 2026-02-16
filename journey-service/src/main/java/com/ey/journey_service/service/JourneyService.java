@@ -136,9 +136,9 @@ public class JourneyService {
 
         for (JourneySeat seat : seats) {
 
-            if (seat.getStatus() == SeatStatus.BOOKED) {
+            if (seat.getStatus() != SeatStatus.AVAILABLE) {
                 throw new RuntimeException(
-                        "Seat already booked: " + seat.getSeatNumber());
+                        "Seat already booked or locked: " + seat.getSeatNumber());
             }
 
             if (seat.getLockedByBookingId() != null &&
