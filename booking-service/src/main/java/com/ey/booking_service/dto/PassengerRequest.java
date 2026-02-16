@@ -12,5 +12,5 @@ public class PassengerRequest {
     private String name;
     private Integer age;
     private String gender;
-    private String seatNumbers;
+    private String seatNumber;
 }

@@ -76,6 +76,9 @@ public class PricingService {
         if (request.getSeatClass() == SeatClass.BUSINESS) {
             surgeFare = surgeFare.multiply(new BigDecimal("1.8"));
         }
+        else{
+            surgeFare = journey.getBaseFare();
+        }
 
 
         if (request.getSeatType() == SeatType.WINDOW) {

@@ -2,8 +2,11 @@ package com.ey.journey_service.controller;
 
 import com.ey.journey_service.dto.CreateJourneyRequest;
 import com.ey.journey_service.dto.JourneyResponse;
+import com.ey.journey_service.dto.SeatInfoResponse;
 import com.ey.journey_service.entity.Journey;
 import com.ey.journey_service.entity.JourneySeat;
+import com.ey.journey_service.entity.SeatStatus;
+import com.ey.journey_service.repository.JourneySeatRepository;
 import com.ey.journey_service.service.JourneyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +22,7 @@ import java.util.List;
 public class JourneyController {
 
     private final JourneyService service;
+    private final JourneySeatRepository seatRepo;
 
     @PostMapping
     public JourneyResponse create(@RequestBody CreateJourneyRequest request) {
@@ -77,6 +81,22 @@ public class JourneyController {
                              @RequestBody List<String> seats) {
 
         service.releaseSeats(journeyId, seats, bookingId);
+    }
+
+    @GetMapping("/{journeyId}/seats/info")
+    public SeatInfoResponse getSeatInfo(
+            @PathVariable Long journeyId,
+            @RequestParam String seatNumber
+    ){
+        JourneySeat seat = seatRepo
+                .findByJourneyIdAndSeatNumber(journeyId, seatNumber)
+                .orElseThrow(() -> new RuntimeException("Seat Not found"));
+
+        return SeatInfoResponse.builder()
+                .seatNumber(seat.getSeatNumber())
+                .seatClass(seat.getSeatClass().name())
+                .available(seat.getStatus() == SeatStatus.AVAILABLE)
+                .build();
     }
 
     private JourneyResponse mapToResponse(Journey journey) {

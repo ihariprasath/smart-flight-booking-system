@@ -55,7 +55,6 @@ public class JourneyService {
         journey.setBaseFare(request.getBaseFare());
         journey.setStatus(JourneyStatus.SCHEDULED);
 
-        // 🔥 Important fields
         journey.setTotalSeats(totalSeats);
         journey.setBusinessSeats(businessSeats);
         journey.setEconomySeats(economySeats);
@@ -123,17 +122,6 @@ public class JourneyService {
         seatRepo.saveAll(seats);
     }
 
-//    private SeatType resolveSeatType(char col) {
-//        return switch (col) {
-//            case 'A', 'F' -> SeatType.WINDOW;
-//            case 'C', 'D' -> SeatType.AISLE;
-//            case 'B', 'E' -> SeatType.MIDDLE;
-//            default -> throw new RuntimeException("Invalid seat");
-//        };
-//    }
-
-
-
     @Transactional
     public void lockSeats(Long journeyId,
                           Long bookingId,
@@ -142,10 +130,24 @@ public class JourneyService {
         List<JourneySeat> seats =
                 seatRepo.findByJourneyIdAndSeatNumberIn(journeyId, seatNumbers);
 
+        if (seats.size() != seatNumbers.size()) {
+            throw new RuntimeException("Some seats not found");
+        }
+
         for (JourneySeat seat : seats) {
 
-            if (seat.getStatus() != SeatStatus.AVAILABLE) {
-                throw new RuntimeException("Seat not available");
+            if (seat.getStatus() == SeatStatus.BOOKED) {
+                throw new RuntimeException(
+                        "Seat already booked: " + seat.getSeatNumber());
+            }
+
+            if (seat.getLockedByBookingId() != null &&
+                    !seat.getLockedByBookingId().equals(bookingId) &&
+                    seat.getLockedUntil() != null &&
+                    seat.getLockedUntil().isAfter(LocalDateTime.now())) {
+
+                throw new RuntimeException(
+                        "Seat already locked: " + seat.getSeatNumber());
             }
 
             seat.setStatus(SeatStatus.LOCKED);
@@ -154,13 +156,6 @@ public class JourneyService {
         }
 
         seatRepo.saveAll(seats);
-
-        Journey journey = journeyRepo.findById(journeyId).orElseThrow();
-        journey.setAvailableSeats(
-                journey.getAvailableSeats() - seatNumbers.size()
-        );
-
-        journeyRepo.save(journey);
     }
 
     @Transactional
@@ -171,17 +166,46 @@ public class JourneyService {
         List<JourneySeat> seats =
                 seatRepo.findByJourneyIdAndSeatNumberIn(journeyId, seatNumbers);
 
+        if (seats.size() != seatNumbers.size()) {
+            throw new RuntimeException("Some seats not found");
+        }
+
+        int newlyBookedCount = 0;
+
         for (JourneySeat seat : seats) {
 
+            if (seat.getStatus() == SeatStatus.BOOKED) {
+                throw new RuntimeException(
+                        "Seat already booked: " + seat.getSeatNumber());
+            }
+
             if (!bookingId.equals(seat.getLockedByBookingId())) {
-                throw new RuntimeException("Seat lock mismatch");
+                throw new RuntimeException(
+                        "Seat lock mismatch for seat: " + seat.getSeatNumber());
             }
 
             seat.setStatus(SeatStatus.BOOKED);
             seat.setLockedUntil(null);
+            seat.setLockedByBookingId(null);
+
+            newlyBookedCount++;
         }
 
         seatRepo.saveAll(seats);
+
+
+        Journey journey = journeyRepo.findById(journeyId)
+                .orElseThrow(() -> new RuntimeException("Journey not found"));
+
+        if (journey.getAvailableSeats() < newlyBookedCount) {
+            throw new RuntimeException("Not enough seats available in journey");
+        }
+
+        journey.setAvailableSeats(
+                journey.getAvailableSeats() - newlyBookedCount
+        );
+
+        journeyRepo.save(journey);
     }
 
 
@@ -251,7 +275,7 @@ public class JourneyService {
                 .departureTime(j.getDepartureTime())
                 .arrivalTime(j.getArrivalTime())
 
-                // 🔥 IMPORTANT FIX
+
                 .totalSeats(j.getTotalSeats())
                 .businessSeats(j.getBusinessSeats())
                 .economySeats(j.getEconomySeats())

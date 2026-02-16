@@ -1,5 +1,6 @@
 package com.ey.booking_service.client;
 
+import com.ey.booking_service.dto.SeatInfoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -20,5 +21,11 @@ public interface JourneyClient {
     void releaseSeats(@PathVariable Long journeyId,
                       @RequestParam Long bookingId,
                       @RequestBody List<String> seatNumbers);
+
+    @GetMapping("/journeys/{journeyId}/seats/info")
+    SeatInfoResponse getSeatInfo(
+            @PathVariable Long journeyId,
+            @RequestParam String seatNumber
+    );
 
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,7 +27,9 @@ public class BookingService {
     private final JourneyClient journeyClient;
     private final PricingClient pricingClient;
 
-
+    // =========================================================
+    // CREATE BOOKING
+    // =========================================================
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
 
@@ -34,11 +37,39 @@ public class BookingService {
             throw new BookingException("Passengers list cannot be empty");
         }
 
+        // ✅ extract seat numbers
         List<String> seatNumbers = request.getPassengers()
                 .stream()
-                .map(PassengerRequest::getSeatNumbers)
+                .map(PassengerRequest::getSeatNumber)
                 .collect(Collectors.toList());
 
+        String seatNumbersStr = String.join(",", seatNumbers);
+
+        // =====================================================
+        // ✅ VALIDATE SEAT MAP (Problem #2 FIX)
+        // =====================================================
+        for (String seatNumber : seatNumbers) {
+
+            SeatInfoResponse seatInfo =
+                    journeyClient.getSeatInfo(request.getJourneyId(), seatNumber);
+
+            if (!seatInfo.getSeatClass()
+                    .equalsIgnoreCase(String.valueOf(request.getSeatClass()))) {
+
+                throw new BookingException(
+                        "Seat " + seatNumber + " is " + seatInfo.getSeatClass()
+                                + " but requested " + request.getSeatClass());
+            }
+
+            if (!seatInfo.isAvailable()) {
+                throw new BookingException(
+                        "Seat " + seatNumber + " is not available");
+            }
+        }
+
+        // =====================================================
+        // ✅ PRICE CALCULATION (Problem #4 FIX)
+        // =====================================================
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (String seatNumber : seatNumbers) {
@@ -46,17 +77,20 @@ public class BookingService {
             PriceRequest priceRequest = PriceRequest.builder()
                     .journeyId(request.getJourneyId())
                     .seatNumber(seatNumber)
+                    .seatClass(request.getSeatClass())
                     .build();
 
             PriceResponse priceResponse = pricingClient.calculate(priceRequest);
-
             totalAmount = totalAmount.add(priceResponse.getTotalAmount());
         }
 
+        // =====================================================
+        // ✅ CREATE BOOKING
+        // =====================================================
         Booking booking = Booking.builder()
                 .bookingRef(UUID.randomUUID().toString())
                 .journeyId(request.getJourneyId())
-                .seatNumbers(seatNumbers)
+                .seatNumbers(seatNumbersStr) // ✅ stores properly
                 .seatClass(request.getSeatClass())
                 .totalAmount(totalAmount)
                 .status(BookingStatus.PENDING)
@@ -64,9 +98,11 @@ public class BookingService {
                 .lockExpiryTime(LocalDateTime.now().plusMinutes(5))
                 .build();
 
-        booking = bookingRepository.save(booking); // Save first
+        booking = bookingRepository.save(booking);
 
-
+        // =====================================================
+        // ✅ SAVE PASSENGERS (Problem #1 FIX)
+        // =====================================================
         List<Passenger> passengers = new ArrayList<>();
 
         for (PassengerRequest p : request.getPassengers()) {
@@ -75,18 +111,19 @@ public class BookingService {
                     .name(p.getName())
                     .age(p.getAge())
                     .gender(p.getGender())
-                    .seatNumbers(p.getSeatNumbers())
+                    .seatNumbers(p.getSeatNumber())
+                    .booking(booking) // ✅ VERY IMPORTANT
                     .build();
-
-            passenger.setBooking(booking);
 
             passengers.add(passenger);
         }
 
         booking.setPassengers(passengers);
-
         booking = bookingRepository.save(booking);
 
+        // =====================================================
+        // ✅ LOCK SEATS (inventory protection)
+        // =====================================================
         journeyClient.lockSeats(
                 request.getJourneyId(),
                 booking.getId(),
@@ -96,6 +133,9 @@ public class BookingService {
         return mapToResponse(booking);
     }
 
+    // =========================================================
+    // CONFIRM BOOKING
+    // =========================================================
     @Transactional
     public BookingResponse confirmBooking(Long bookingId) {
 
@@ -105,10 +145,12 @@ public class BookingService {
             throw new BookingException("Only pending booking can be confirmed");
         }
 
+        List<String> seatNumbers =
+                Arrays.asList(booking.getSeatNumbers().split(","));
 
         journeyClient.confirmSeats(
                 booking.getJourneyId(),
-                booking.getSeatNumbers()
+                seatNumbers
         );
 
         booking.setStatus(BookingStatus.CONFIRMED);
@@ -116,6 +158,9 @@ public class BookingService {
         return mapToResponse(bookingRepository.save(booking));
     }
 
+    // =========================================================
+    // CANCEL BOOKING
+    // =========================================================
     @Transactional
     public BookingResponse cancelBooking(Long bookingId) {
 
@@ -125,17 +170,17 @@ public class BookingService {
             throw new BookingException("Booking already cancelled");
         }
 
+        List<String> seatNumbers =
+                Arrays.asList(booking.getSeatNumbers().split(","));
 
         journeyClient.releaseSeats(
                 booking.getJourneyId(),
                 booking.getId(),
-                booking.getSeatNumbers()
+                seatNumbers
         );
 
         RefundRequest refundRequest = new RefundRequest(bookingId);
-
-        RefundResponse refund =
-                pricingClient.calculateRefund(refundRequest);
+        RefundResponse refund = pricingClient.calculateRefund(refundRequest);
 
         booking.setStatus(BookingStatus.CANCELLED);
         booking.setRefundAmount(refund.getRefundAmount());
@@ -143,6 +188,9 @@ public class BookingService {
         return mapToResponse(bookingRepository.save(booking));
     }
 
+    // =========================================================
+    // EXPIRE PENDING BOOKINGS
+    // =========================================================
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void expirePendingBookings() {
@@ -155,10 +203,13 @@ public class BookingService {
 
         for (Booking booking : expiredBookings) {
 
+            List<String> seatNumbers =
+                    Arrays.asList(booking.getSeatNumbers().split(","));
+
             journeyClient.releaseSeats(
                     booking.getJourneyId(),
                     booking.getId(),
-                    booking.getSeatNumbers()
+                    seatNumbers
             );
 
             booking.setStatus(BookingStatus.EXPIRED);
@@ -166,6 +217,9 @@ public class BookingService {
         }
     }
 
+    // =========================================================
+    // GET BY ID
+    // =========================================================
     public BookingResponse getById(Long bookingId) {
         return mapToResponse(getBooking(bookingId));
     }
@@ -175,23 +229,38 @@ public class BookingService {
                 .orElseThrow(() -> new BookingException("Booking not found"));
     }
 
+    // =========================================================
+    // MAP TO RESPONSE
+    // =========================================================
     private BookingResponse mapToResponse(Booking booking) {
 
-        List<PassengerResponse> passengersResponses = booking.getPassengers()
-                .stream()
-                .map(p -> PassengerResponse.builder()
-                        .name(p.getName())
-                        .age(p.getAge())
-                        .gender(p.getGender())
-                        .seatNumber(p.getSeatNumbers())
-                        .build())
-                .toList();
+        if (booking == null) {
+            return null;
+        }
+
+        List<PassengerResponse> passengersResponses =
+                booking.getPassengers() == null
+                        ? List.of()
+                        : booking.getPassengers()
+                        .stream()
+                        .map(p -> PassengerResponse.builder()
+                                .name(p.getName())
+                                .age(p.getAge())
+                                .gender(p.getGender())
+                                .seatNumber(p.getSeatNumbers())
+                                .build())
+                        .toList();
+
+        List<String> seatNumbers =
+                booking.getSeatNumbers() == null
+                        ? List.of()
+                        : Arrays.asList(booking.getSeatNumbers().split(","));
 
         return BookingResponse.builder()
                 .id(booking.getId())
                 .bookingRef(booking.getBookingRef())
                 .journeyId(booking.getJourneyId())
-                .seatNumbers(booking.getSeatNumbers())
+                .seatNumbers(seatNumbers)
                 .seatClass(booking.getSeatClass())
                 .passengers(passengersResponses)
                 .totalAmount(booking.getTotalAmount())

@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,8 +24,9 @@ public class Booking {
     private String bookingRef;
     private Long journeyId;
 
-    @ElementCollection
-    private List<String> seatNumbers;
+
+    @Column(name = "seat_numbers")
+    private String seatNumbers;
 
     @Enumerated(EnumType.STRING)
     private SeatClass seatClass;
@@ -50,4 +50,9 @@ public class Booking {
     private LocalDateTime lockExpiryTime;
 
     private Long bookingId;
+
+    public void addPassenger(Passenger passenger){
+        this.passengers.add(passenger);
+        passenger.setBooking(this);
+    }
 }

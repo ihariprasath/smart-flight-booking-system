@@ -18,17 +18,11 @@ public class PricingController {
 
     private final PricingService pricingService;
 
-    // ============================================
-    // 1️⃣ Calculate Dynamic Price
-    // ============================================
     @PostMapping("/calculate")
     public PriceResponse calculate(@RequestBody PriceRequest request) {
         return pricingService.calculatePrice(request);
     }
 
-    // ============================================
-    // 2️⃣ Refund Calculation
-    // ============================================
     @PostMapping("/refund/{bookingId}")
     public RefundResponse refund(@PathVariable Long bookingId) {
         return pricingService.calculateRefund(bookingId);
