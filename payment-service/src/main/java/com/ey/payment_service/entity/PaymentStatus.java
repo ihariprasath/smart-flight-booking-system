@@ -1,8 +1,7 @@
 package com.ey.payment_service.entity;
 
-public enum Status {
-
+public enum PaymentStatus {
+    INITIATED,
     SUCCESS,
-    FAILED,
-    REFUNDED
+    FAILED
 }

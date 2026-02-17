@@ -1,30 +1,39 @@
 package com.ey.ticket_service.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
+
 @Entity
-@Data
+@Table(name = "ticket")
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
-    private Long bookingId;
-    private String passengerName;
-    private String pnr;
-    private String flightNumber;
-    private LocalDateTime issuedAt;
 
+    @Column(unique = true, nullable = false)
+    private String ticketNumber;
+
+    @Column(nullable = false)
+    private Long bookingId;
+
+    @Column(nullable = false)
+    private Long paymentId;
+
+    @Column(nullable = false)
+    private Long passengerName;
+
+    @Column(nullable = false)
+    private String seatNumbers;
+
+    private String pdfPath;
+
+    private LocalDateTime createdAt;
 }

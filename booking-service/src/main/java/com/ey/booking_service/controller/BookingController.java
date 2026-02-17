@@ -27,8 +27,13 @@ public class BookingController {
         return bookingService.cancelBooking(id);
     }
 
+    @PutMapping("/{id}/fail")
+    public void fail(@PathVariable Long id){
+        bookingService.failBooking(id);
+    }
+
     @GetMapping("/{id}")
-    public BookingResponse get(@PathVariable Long id) {
+    public BookingResponse getById(@PathVariable Long id) {
         return bookingService.getById(id);
     }
 }

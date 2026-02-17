@@ -1,29 +1,38 @@
 package com.ey.payment_service.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Table(name = "payment")
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
+
+    @Column(name = "booking_id",unique = true, nullable = false)
     private Long bookingId;
-    private Double amount;
+
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(nullable = false)
+    private PaymentStatus status;
 
-    private LocalDateTime createAt;
+    private String paymentMethod;
+
+    @Column(unique = true)
+    private String transactionRef;
+
+    private LocalDateTime createdAt;
+
 }
