@@ -41,7 +41,6 @@ public class BookingService {
 
         String seatNumbersStr = String.join(",", seatNumbers);
 
-
         for (String seatNumber : seatNumbers) {
 
             SeatInfoResponse seatInfo =
@@ -61,7 +60,6 @@ public class BookingService {
             }
         }
 
-
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (String seatNumber : seatNumbers) {
@@ -76,20 +74,18 @@ public class BookingService {
             totalAmount = totalAmount.add(priceResponse.getTotalAmount());
         }
 
-
         Booking booking = Booking.builder()
                 .bookingRef(UUID.randomUUID().toString())
                 .journeyId(request.getJourneyId())
-                .seatNumbers(seatNumbersStr) // ✅ stores properly
+                .seatNumbers(seatNumbersStr)
                 .seatClass(request.getSeatClass())
                 .totalAmount(totalAmount)
                 .status(BookingStatus.PENDING)
                 .createdAt(LocalDateTime.now())
-                .lockExpiryTime(LocalDateTime.now().plusMinutes(5))
+                .lockExpiryTime(LocalDateTime.now().plusMinutes(30))
                 .build();
 
         booking = bookingRepository.save(booking);
-
 
         List<Passenger> passengers = new ArrayList<>();
 
@@ -100,7 +96,7 @@ public class BookingService {
                     .age(p.getAge())
                     .gender(p.getGender())
                     .seatNumbers(p.getSeatNumber())
-                    .booking(booking) // ✅ VERY IMPORTANT
+                    .booking(booking)
                     .build();
 
             passengers.add(passenger);
@@ -109,31 +105,44 @@ public class BookingService {
         booking.setPassengers(passengers);
         booking = bookingRepository.save(booking);
 
-
         journeyClient.lockSeats(
                 request.getJourneyId(),
                 booking.getId(),
                 seatNumbers
         );
-
         return mapToResponse(booking);
     }
-
 
     @Transactional
     public BookingResponse confirmBooking(Long bookingId) {
 
-        Booking booking = getBooking(bookingId);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingException("Booking not found"));
 
+        // ✅ allow only pending
         if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new BookingException("Only pending booking can be confirmed");
+            throw new BookingException(
+                    "Only pending booking can be confirmed. Current status: "
+                            + booking.getStatus());
         }
 
+        // ✅ check expiry
+        if (booking.getLockExpiryTime() != null &&
+                booking.getLockExpiryTime().isBefore(LocalDateTime.now())) {
+
+            booking.setStatus(BookingStatus.EXPIRED);
+            bookingRepository.save(booking);
+
+            throw new BookingException("Booking lock expired");
+        }
+
+        // ✅ confirm seats
         List<String> seatNumbers =
                 Arrays.asList(booking.getSeatNumbers().split(","));
 
         journeyClient.confirmSeats(
                 booking.getJourneyId(),
+                booking.getId(),
                 seatNumbers
         );
 
@@ -149,6 +158,10 @@ public class BookingService {
 
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new BookingException("Booking already cancelled");
+        }
+
+        if(booking.getStatus() != BookingStatus.PENDING){
+            throw new BookingException("Only pending booking can be confirmed");
         }
 
         List<String> seatNumbers =

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,65 +28,67 @@ public class PaymentService {
     @Transactional
     public PaymentResponse processPayment(PaymentRequest request) {
 
+        // 1. Check existing payment
+        Optional<Payment> existingOpt =
+                paymentRepository.findTopByBookingIdOrderByCreatedAtDesc(
+                        request.getBookingId());
+
+        if (existingOpt.isPresent() &&
+                existingOpt.get().getStatus() == PaymentStatus.SUCCESS) {
+
+            return mapToResponse(existingOpt.get());
+        }
+
+        // 2. Get booking amount
         BookingResponse booking =
                 bookingClient.getBooking(request.getBookingId());
 
         if (booking == null) {
-            throw new RuntimeException(
-                    "Booking not found: " + request.getBookingId());
-        }
-
-        if (!"PENDING".equalsIgnoreCase(booking.getStatus())) {
-            throw new RuntimeException(
-                    "Booking is not in PENDING state. Current status: "
-                            + booking.getStatus());
-        }
-
-        List<Payment> existingPayments =
-                paymentRepository.findAllByBookingId(request.getBookingId());
-
-        if (!existingPayments.isEmpty()) {
-            log.warn("Payment already exists for booking {}",
-                    request.getBookingId());
-
-            return mapToResponse(existingPayments.get(0));
+            throw new RuntimeException("Booking not found");
         }
 
         BigDecimal amount = booking.getTotalAmount();
 
-        boolean paymentSuccess =
-                simulatePayment(request.getPaymentMethod());
+        // 3. Decide payment status
+        PaymentStatus paymentStatus;
 
+        if (request.getForceStatus() != null) {
+            paymentStatus = PaymentStatus.valueOf(request.getForceStatus());
+        } else {
+            paymentStatus = Math.random() > 0.3
+                    ? PaymentStatus.SUCCESS
+                    : PaymentStatus.FAILED;
+        }
+
+        // 4. Save payment
         Payment payment = Payment.builder()
                 .bookingId(request.getBookingId())
                 .amount(amount)
                 .paymentMethod(request.getPaymentMethod())
-                .transactionRef(UUID.randomUUID().toString())
-                .status(paymentSuccess
-                        ? PaymentStatus.SUCCESS
-                        : PaymentStatus.FAILED)
+                .transactionRef("TXN-" + UUID.randomUUID())
+                .status(paymentStatus)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         payment = paymentRepository.save(payment);
 
+        // 5. CALL BOOKING SERVICE (CRITICAL)
         try {
-
-            if (paymentSuccess) {
+            if (paymentStatus == PaymentStatus.SUCCESS) {
+                log.info("Confirming booking {}", request.getBookingId());
                 bookingClient.confirmBooking(request.getBookingId());
             } else {
+                log.info("Failing booking {}", request.getBookingId());
                 bookingClient.failBooking(request.getBookingId());
             }
-
         } catch (Exception ex) {
-            log.error("Booking update failed after payment", ex);
+            log.error("Booking update failed: {}", ex.getMessage());
         }
 
         return mapToResponse(payment);
     }
 
     private boolean simulatePayment(String method) {
-        // simple mock gateway (80% success)
         return Math.random() > 0.2;
     }
 

@@ -67,11 +67,10 @@ public class JourneyController {
         service.lockSeats(journeyId,bookingId, seatNumbers);
     }
 
-    @PostMapping("/{journeyId}/confirm")
+    @PutMapping ("/{journeyId}/seats/confirm")
     public void confirmSeats(@PathVariable Long journeyId,
                              @RequestParam Long bookingId,
                              @RequestBody List<String> seats) {
-
         service.confirmSeats(journeyId, seats, bookingId);
     }
 
@@ -79,7 +78,6 @@ public class JourneyController {
     public void releaseSeats(@PathVariable Long journeyId,
                              @RequestParam Long bookingId,
                              @RequestBody List<String> seats) {
-
         service.releaseSeats(journeyId, seats, bookingId);
     }
 

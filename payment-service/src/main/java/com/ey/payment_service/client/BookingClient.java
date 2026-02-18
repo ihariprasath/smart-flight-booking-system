@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public interface BookingClient {
 
     @GetMapping("/bookings/{id}")
-    BookingResponse getBooking(@PathVariable("id") Long id);
+    BookingResponse getBooking(@PathVariable Long id);
 
     @PutMapping("/bookings/{bookingId}/confirm")
     void confirmBooking(@PathVariable Long bookingId);

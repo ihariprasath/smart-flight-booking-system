@@ -14,4 +14,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByBookingId(Long bookingId);
 
     List<Payment> findAllByBookingId(@NotNull Long bookingId);
+
+    Optional<Payment> findTopByBookingIdOrderByCreatedAtDesc(@NotNull Long bookingId);
 }

@@ -15,6 +15,7 @@ public interface JourneyClient {
 
     @PutMapping("/journeys/{journeyId}/seats/confirm")
     void confirmSeats(@PathVariable Long journeyId,
+                      @RequestParam Long bookingId,
                       @RequestBody List<String> seatNumbers);
 
     @PutMapping("/journeys/{journeyId}/seats/release")

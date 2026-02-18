@@ -1,24 +1,52 @@
 package com.ey.auth_service.service;
 
+import com.ey.auth_service.dto.*;
+import com.ey.auth_service.entity.Role;
 import com.ey.auth_service.entity.User;
-import com.ey.auth_service.repository.UserRespository;
+import com.ey.auth_service.repository.UserRepository;
+import com.ey.auth_service.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRespository repo;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public User register(User user){
-        return repo.save(user);
+    // ✅ Register
+    public void register(RegisterRequest request) {
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.valueOf(request.getRole()))
+                .build();
+
+        userRepository.save(user);
     }
 
-    public Optional<User> login(String email, String password){
-        return repo.findByEmail(email).filter(u -> u.getPassword().equals(password));
+    // ✅ Login
+    public AuthResponse login(LoginRequest request) {
+
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        String token = jwtUtil.generateToken(
+                user.getUsername(),
+                user.getRole().name()
+        );
+
+        return AuthResponse.builder()
+                .token(token)
+                .role(user.getRole().name())
+                .build();
     }
 }
-

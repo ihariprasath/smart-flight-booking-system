@@ -13,4 +13,6 @@ public class PaymentRequest {
 
     @NotNull
     private String paymentMethod;
+
+    private String forceStatus;
 }
