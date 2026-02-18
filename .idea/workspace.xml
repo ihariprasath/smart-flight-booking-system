@@ -68,7 +68,8 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true"
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/WL584QH/Documents/Capstone Mentor/smart-flight-booking-system/ticket-service/src/main/java/com/ey/ticket_service"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -76,14 +77,22 @@
       <recent name="com.ey.journey_service.dto" />
       <recent name="com.ey.journey_service.client" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\WL584QH\Documents\Capstone Mentor\smart-flight-booking-system\ticket-service\src\main\java\com\ey\ticket_service" />
+      <recent name="C:\Users\WL584QH\Documents\Capstone Mentor\smart-flight-booking-system\pricing-service\src\main\java\com\ey\pricing_service" />
+      <recent name="C:\Users\WL584QH\Documents\Capstone Mentor\smart-flight-booking-system\payment-service\src\main\java\com\ey\payment_service" />
+      <recent name="C:\Users\WL584QH\Documents\Capstone Mentor\smart-flight-booking-system\booking-service\src\main\java\com\ey\booking_service" />
+      <recent name="C:\Users\WL584QH\Documents\Capstone Mentor\smart-flight-booking-system\search-service\src\main\java\com\ey\search_service" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ey.ticket_service.security" />
+      <recent name="com.ey.payment_service.security" />
+      <recent name="com.ey.pricing_service.security" />
+      <recent name="com.ey.journey_service.security" />
       <recent name="com.ey.pricing_service.dto" />
-      <recent name="com.ey.pricing_service.repositories" />
-      <recent name="com.ey.search_service.dto" />
-      <recent name="com.ey.journey_service.exception" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.PricingServiceApplication">
+  <component name="RunManager" selected="Application.TicketServiceApplication">
     <configuration name="BookingServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ey.booking_service.BookingServiceApplication" />
       <module name="booking-service" />
@@ -151,11 +160,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.PricingServiceApplication" />
         <item itemvalue="Application.TicketServiceApplication" />
         <item itemvalue="Application.PaymentServiceApplication" />
         <item itemvalue="Application.BookingServiceApplication" />
         <item itemvalue="Application.JourneyServiceApplication" />
+        <item itemvalue="Application.PricingServiceApplication" />
       </list>
     </recent_temporary>
   </component>

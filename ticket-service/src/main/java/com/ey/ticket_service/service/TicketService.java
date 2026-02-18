@@ -32,7 +32,7 @@ public class TicketService {
                 });
 
         // ✅ get booking
-        BookingResponse booking = bookingClient.getBooking(bookingId);
+        BookingResponse booking = bookingClient.getById(bookingId);
 
         if (!"CONFIRMED".equalsIgnoreCase(booking.getStatus())) {
             throw new RuntimeException("Booking not confirmed");
@@ -62,7 +62,7 @@ public class TicketService {
                 .ticketNumber(ticketNumber)
                 .bookingId(bookingId)
                 .paymentId(payment.getId())
-                .passengerName(Long.valueOf(passengerName))
+                .passengerName(passengerName)
                 .seatNumbers(seats)
                 .pdfPath(pdfPath)
                 .createdAt(LocalDateTime.now())

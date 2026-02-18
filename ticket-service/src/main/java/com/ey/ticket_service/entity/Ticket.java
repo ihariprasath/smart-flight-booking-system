@@ -27,8 +27,8 @@ public class Ticket {
     @Column(nullable = false)
     private Long paymentId;
 
-    @Column(nullable = false)
-    private Long passengerName;
+    @Column(name = "passenger_name", nullable = false)
+    private String passengerName;
 
     @Column(nullable = false)
     private String seatNumbers;

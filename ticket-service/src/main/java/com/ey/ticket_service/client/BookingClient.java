@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface BookingClient {
 
     @GetMapping("/bookings/{id}")
-    BookingResponse getBooking(@PathVariable Long id);
+    BookingResponse getById(@PathVariable Long id);
 }
