@@ -116,6 +116,7 @@ public class PricingService {
                 .bookingId(request.getBookingId())
                 .journeyId(request.getJourneyId())
                 .baseFare(baseFare)
+                .surgeFare(surgeFare)
                 .gstAmount(gstAmount)
                 .totalAmount(finalAmount)
                 .build();

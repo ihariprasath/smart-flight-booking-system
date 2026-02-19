@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PaymentResponse {
     private Long id;
-    private Long paymentId;
     private Long bookingId;
     private BigDecimal amount;
     private String paymentMethod;

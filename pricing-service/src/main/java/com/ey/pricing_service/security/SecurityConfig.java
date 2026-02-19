@@ -29,13 +29,11 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        // USER + ADMIN (booking flow)
                         .requestMatchers(
                                 "/pricing/calculate",
                                 "/pricing/refund"
                         ).hasAnyRole("USER", "ADMIN")
 
-                        // ADMIN ONLY (management)
                         .requestMatchers(
                                 "/pricing",
                                 "/pricing/**"

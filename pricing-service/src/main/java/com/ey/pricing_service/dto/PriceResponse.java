@@ -12,9 +12,7 @@ public class PriceResponse {
     private Long bookingId;
     private Long journeyId;
     private BigDecimal baseFare;
-    private BigDecimal classAdjustedFare;
-    private BigDecimal surgeAdjustedFare;
-    private BigDecimal seatTypeAdjustedFare;
+    private BigDecimal surgeFare;
     private BigDecimal gstAmount;
     private BigDecimal totalAmount;
 }

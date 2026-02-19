@@ -8,6 +8,7 @@ import com.ey.journey_service.entity.*;
 import com.ey.journey_service.repository.JourneyRepository;
 import com.ey.journey_service.repository.JourneySeatRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JourneyService {
@@ -28,19 +30,27 @@ public class JourneyService {
     @Transactional
     public Journey create(CreateJourneyRequest request) {
 
-        // 1️⃣ Get flight details from Flight Service
         FlightResponse flight = flightClient.getById(request.getFlightId());
 
         int totalSeats = flight.getTotalSeats();
 
-        // Business & Economy seats based on aircraft
         int businessSeats = (int) (totalSeats * 0.2);   // 20% business
         int economySeats = totalSeats - businessSeats;  // 80% economy
 
-        // 2️⃣ Available seats from request
         int availableSeats = request.getAvailableSeats();
 
-        // 3️⃣ Calculate available business & economy seats
+        if(availableSeats > totalSeats){
+            throw new IllegalArgumentException(
+                    "Available seats cannot exceeds total seats of the flight"
+            );
+        }
+
+        if(availableSeats < 0){
+            throw new IllegalArgumentException(
+                    "Available seats cannot be negative"
+            );
+        }
+
         int availableBusinessSeats = (int) (availableSeats * 0.2);
         int availableEconomySeats = availableSeats - availableBusinessSeats;
 
@@ -289,7 +299,7 @@ public class JourneyService {
                 .build();
     }
 
-    public JourneyResponse get(Long id) {
+    public JourneyResponse getById(Long id) {
 
         Journey journey = journeyRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Journey not found"));
@@ -321,6 +331,16 @@ public class JourneyService {
         Journey journey = journeyRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Journey not found"));
 
+        if(journey.getStatus() == JourneyStatus.CANCELLED){
+            log.warn("Journey already cancelled");
+            throw new IllegalArgumentException("Journey already cancelled");
+        }
+
+        if(journey.getStatus() == JourneyStatus.COMPLETED){
+            log.warn("Journey already cancelled");
+            throw new IllegalArgumentException("Journey already completed");
+        }
+
         journey.setStatus(JourneyStatus.CANCELLED);
 
         journeyRepo.save(journey);
@@ -337,8 +357,6 @@ public class JourneyService {
 
         return journey.getBaseFare();
     }
-
-
     public List<JourneySeat> getSeats(Long journeyId) {
         return seatRepo.findByJourneyId(journeyId);
     }

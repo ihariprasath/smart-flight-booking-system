@@ -2,5 +2,6 @@ package com.ey.journey_service.entity;
 
 public enum JourneyStatus {
     SCHEDULED,
-    CANCELLED
+    CANCELLED,
+    COMPLETED
 }

@@ -92,7 +92,7 @@
       <recent name="com.ey.pricing_service.dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.BookingServiceApplication">
+  <component name="RunManager" selected="Application.JourneyServiceApplication">
     <configuration name="ApiGatewayApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ey.api_gateway.ApiGatewayApplication" />
       <module name="api-gateway" />
@@ -160,8 +160,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.BookingServiceApplication" />
         <item itemvalue="Application.JourneyServiceApplication" />
+        <item itemvalue="Application.BookingServiceApplication" />
         <item itemvalue="Application.AuthServiceApplication" />
         <item itemvalue="Application.FlightServiceApplication" />
         <item itemvalue="Application.ApiGatewayApplication" />

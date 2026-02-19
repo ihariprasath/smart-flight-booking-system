@@ -20,44 +20,43 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ SEARCH — USER + ADMIN
                         .requestMatchers(HttpMethod.GET, "/journeys/search")
                         .hasAnyRole("USER", "ADMIN")
 
-                        // ✅ SEAT INFO — USER + ADMIN (IMPORTANT)
                         .requestMatchers(HttpMethod.GET, "/journeys/*/seats/**")
                         .hasAnyRole("USER", "ADMIN")
 
-                        // ✅ BASE FARE — USER + ADMIN
                         .requestMatchers(HttpMethod.GET, "/journeys/*/base-fare")
                         .hasAnyRole("USER", "ADMIN")
 
                         .requestMatchers(HttpMethod.PUT, "/journeys/*/seats/release")
                         .permitAll()
 
-                        // ✅ ADMIN ONLY
+                        .requestMatchers(HttpMethod.GET, "/journeys/internal/**")
+                        .permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/journeys/*")
+                        .hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/journeys")
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.PUT, "/journeys/**")
-                        .hasAnyRole("ADMIN","USER")
+                        .requestMatchers(HttpMethod.PUT, "/journeys/*/cancel")
+                        .hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.DELETE, "/journeys/**")
                         .hasRole("ADMIN")
 
-                        // ✅ everything else
                         .anyRequest().authenticated()
                 )
 
-                .addFilterBefore(jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

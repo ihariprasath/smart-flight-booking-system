@@ -30,10 +30,10 @@ public class JourneyController {
         return mapToResponse(journey);
     }
 
-    @GetMapping("/{id}")
-    public JourneyResponse get(@PathVariable Long id) {
-        return service.get(id);
-    }
+//    @GetMapping("/{id}")
+//    public JourneyResponse get(@PathVariable Long id) {
+//        return service.get(id);
+//    }
 
     @GetMapping("/search")
     public List<JourneyResponse> search(
@@ -95,6 +95,11 @@ public class JourneyController {
                 .seatClass(seat.getSeatClass().name())
                 .available(seat.getStatus() == SeatStatus.AVAILABLE)
                 .build();
+    }
+
+    @GetMapping("/internal/{id}")
+    public JourneyResponse getJourneyInternal(@PathVariable Long id){
+        return service.getById(id);
     }
 
     private JourneyResponse mapToResponse(Journey journey) {

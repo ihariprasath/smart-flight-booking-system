@@ -11,7 +11,7 @@ import java.util.List;
 @FeignClient(name = "journey-service")
 public interface JourneyClient {
 
-    @GetMapping("/journeys/{id}")
+    @GetMapping("/journeys/internal/{id}")
     JourneyResponse getJourney(@PathVariable Long id);
 
     @GetMapping("/journeys/{id}/seats")
