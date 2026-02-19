@@ -50,7 +50,6 @@ class BookingControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // ✅ CREATE BOOKING
     @Test
     @WithMockUser(roles = "USER")
     void createBooking_success() throws Exception {
@@ -82,7 +81,6 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.id").value(1));
     }
 
-    // ✅ GET BY ID
     @Test
     @WithMockUser(roles = "USER")
     void getBooking_success() throws Exception {
@@ -105,7 +103,6 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.id").value(32L));
     }
 
-    // ✅ CONFIRM BOOKING
     @Test
     @WithMockUser(roles = "ADMIN")
     void confirmBooking_success() throws Exception {
@@ -123,7 +120,6 @@ class BookingControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // ✅ CANCEL BOOKING
     @Test
     @WithMockUser(roles = "USER")
     void cancelBooking_success() throws Exception {

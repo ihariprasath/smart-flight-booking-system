@@ -34,7 +34,6 @@ class BookingServiceTest {
     @InjectMocks
     private BookingService bookingService;
 
-    // ✅ CREATE BOOKING SUCCESS
     @Test
     void createBooking_success() {
 
@@ -75,7 +74,6 @@ class BookingServiceTest {
         verify(journeyClient).lockSeats(eq(1L), anyLong(), any());
     }
 
-    // ✅ CONFIRM BOOKING SUCCESS
     @Test
     void confirmBooking_success() {
 
@@ -98,7 +96,6 @@ class BookingServiceTest {
         verify(journeyClient).confirmSeats(eq(1L), eq(1L), any());
     }
 
-    // ✅ CANCEL BOOKING ALREADY CANCELLED
     @Test
     void cancelBooking_alreadyCancelled() {
 
@@ -115,8 +112,7 @@ class BookingServiceTest {
                 () -> bookingService.cancelBooking(1L)
         );
     }
-
-    // ✅ GET BY ID
+    
     @Test
     void getById_success() {
 
