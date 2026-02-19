@@ -35,7 +35,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         log.debug("Auth header: {}", authHeader);
 
-        // ✅ Skip if no token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -46,10 +45,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String username = jwtUtil.extractUsername(token);
             String role = jwtUtil.extractRole(token);
 
-            // ✅ Only set if not already authenticated
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // 🔥 CRITICAL: ROLE_ prefix (MOST IMPORTANT)
                 List<SimpleGrantedAuthority> authorities =
                         List.of(new SimpleGrantedAuthority("ROLE_" + role));
 

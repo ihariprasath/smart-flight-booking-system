@@ -17,7 +17,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    // ✅ Register
     public void register(RegisterRequest request) {
 
         User user = User.builder()
@@ -29,7 +28,6 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    // ✅ Login
     public AuthResponse login(LoginRequest request) {
 
         User user = userRepository.findByUsername(request.getUsername())

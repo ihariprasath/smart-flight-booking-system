@@ -27,7 +27,6 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ USER BOOKING
                         .requestMatchers("/bookings/**")
                         .hasAnyRole("USER", "ADMIN")
 

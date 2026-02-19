@@ -63,6 +63,7 @@
     "Application.UserServiceApplication.executor": "Run",
     "JUnit.All in booking-service (1).executor": "Run",
     "JUnit.All in booking-service (2).executor": "Run",
+    "JUnit.All in booking-service (3).executor": "Run",
     "JUnit.All in booking-service.executor": "Run",
     "JUnit.All in eureka-server.executor": "Run",
     "JUnit.BookingControllerTest.createBooking_success.executor": "Run",

@@ -21,24 +21,20 @@ public class TicketService {
     private final PaymentClient paymentClient;
     private final PdfService pdfService;
 
-    // ✅ GENERATE TICKET
     @Transactional
     public TicketResponse generateTicket(Long bookingId) {
 
-        // 🔒 prevent duplicate ticket
         ticketRepository.findByBookingId(bookingId)
                 .ifPresent(t -> {
                     throw new RuntimeException("Ticket already generated");
                 });
 
-        // ✅ get booking
         BookingResponse booking = bookingClient.getById(bookingId);
 
         if (!"CONFIRMED".equalsIgnoreCase(booking.getStatus())) {
             throw new RuntimeException("Booking not confirmed");
         }
 
-        // ✅ get payment
         PaymentResponse payment = paymentClient.getByBookingId(bookingId);
 
         if (!"SUCCESS".equalsIgnoreCase(payment.getStatus())) {
@@ -50,7 +46,6 @@ public class TicketService {
         String passengerName = booking.getPassengers().get(0).getName();
         String seats = String.join(",", booking.getSeatNumbers());
 
-        // ✅ generate PDF
         String pdfPath = pdfService.generateTicketPdf(
                 ticketNumber,
                 bookingId,
@@ -73,13 +68,11 @@ public class TicketService {
         return map(ticket);
     }
 
-    // ✅ GET BY ID
     public TicketResponse getById(Long id) {
         return map(ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found")));
     }
 
-    // ✅ DOWNLOAD PATH
     public String getTicketPdf(Long id) {
         return ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"))

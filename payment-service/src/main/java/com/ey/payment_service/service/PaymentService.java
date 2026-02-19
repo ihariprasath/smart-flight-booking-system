@@ -28,7 +28,6 @@ public class PaymentService {
     @Transactional
     public PaymentResponse processPayment(PaymentRequest request) {
 
-        // 1. Check existing payment
         Optional<Payment> existingOpt =
                 paymentRepository.findTopByBookingIdOrderByCreatedAtDesc(
                         request.getBookingId());
@@ -39,7 +38,6 @@ public class PaymentService {
             return mapToResponse(existingOpt.get());
         }
 
-        // 2. Get booking amount
         BookingResponse booking =
                 bookingClient.getBooking(request.getBookingId());
 
@@ -49,7 +47,6 @@ public class PaymentService {
 
         BigDecimal amount = booking.getTotalAmount();
 
-        // 3. Decide payment status
         PaymentStatus paymentStatus;
 
         if (request.getForceStatus() != null) {
@@ -60,7 +57,6 @@ public class PaymentService {
                     : PaymentStatus.FAILED;
         }
 
-        // 4. Save payment
         Payment payment = Payment.builder()
                 .bookingId(request.getBookingId())
                 .amount(amount)
@@ -72,7 +68,6 @@ public class PaymentService {
 
         payment = paymentRepository.save(payment);
 
-        // 5. CALL BOOKING SERVICE (CRITICAL)
         try {
             if (paymentStatus == PaymentStatus.SUCCESS) {
                 log.info("Confirming booking {}", request.getBookingId());

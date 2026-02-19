@@ -24,7 +24,6 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ user can pay
                         .requestMatchers("/payments/**")
                         .hasAnyRole("USER", "ADMIN")
 

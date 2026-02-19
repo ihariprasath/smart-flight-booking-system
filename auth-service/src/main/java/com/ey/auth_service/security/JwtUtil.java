@@ -15,9 +15,8 @@ public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    private static final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 hours
+    private static final long EXPIRATION = 1000 * 60 * 60 * 10;
 
-    // ✅ Generate token
     public String generateToken(String username, String role) {
 
         return Jwts.builder()
@@ -29,17 +28,14 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ✅ Extract username
     public String extractUsername(String token) {
         return getClaims(token).getSubject();
     }
 
-    // ✅ Extract role
     public String extractRole(String token) {
         return getClaims(token).get("role", String.class);
     }
 
-    // ✅ Validate token
     public boolean validateToken(String token) {
         try {
             getClaims(token);
