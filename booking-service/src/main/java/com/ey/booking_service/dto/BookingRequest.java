@@ -4,10 +4,7 @@ import com.ey.booking_service.entity.SeatClass;
 import com.ey.booking_service.entity.SeatType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +12,8 @@ import java.util.List;
 @Getter
 @Setter
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookingRequest {
 
     @NotNull

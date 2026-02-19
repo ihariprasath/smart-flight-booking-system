@@ -119,14 +119,12 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingException("Booking not found"));
 
-        // ✅ allow only pending
         if (booking.getStatus() != BookingStatus.PENDING) {
             throw new BookingException(
                     "Only pending booking can be confirmed. Current status: "
                             + booking.getStatus());
         }
 
-        // ✅ check expiry
         if (booking.getLockExpiryTime() != null &&
                 booking.getLockExpiryTime().isBefore(LocalDateTime.now())) {
 
@@ -136,7 +134,6 @@ public class BookingService {
             throw new BookingException("Booking lock expired");
         }
 
-        // ✅ confirm seats
         List<String> seatNumbers =
                 Arrays.asList(booking.getSeatNumbers().split(","));
 

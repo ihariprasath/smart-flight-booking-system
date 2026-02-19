@@ -61,7 +61,12 @@
     "Application.SearchServiceApplication.executor": "Run",
     "Application.TicketServiceApplication.executor": "Run",
     "Application.UserServiceApplication.executor": "Run",
+    "JUnit.All in booking-service (1).executor": "Run",
+    "JUnit.All in booking-service (2).executor": "Run",
+    "JUnit.All in booking-service.executor": "Run",
     "JUnit.All in eureka-server.executor": "Run",
+    "JUnit.BookingControllerTest.createBooking_success.executor": "Run",
+    "JUnit.BookingControllerTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -92,79 +97,69 @@
       <recent name="com.ey.pricing_service.dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.JourneyServiceApplication">
-    <configuration name="ApiGatewayApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ey.api_gateway.ApiGatewayApplication" />
-      <module name="api-gateway" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ey.api_gateway.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
+  <component name="RunManager" selected="JUnit.All in booking-service (3)">
+    <configuration name="All in booking-service (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="booking-service" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuthServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ey.auth_service.AuthServiceApplication" />
-      <module name="auth-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ey.auth_service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
+    <configuration name="All in booking-service (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="booking-service" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BookingServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ey.booking_service.BookingServiceApplication" />
+    <configuration name="All in booking-service (3)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="booking-service" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BookingControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="booking-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.ey.booking_service.*" />
+          <option name="PATTERN" value="com.ey.booking_service.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="com.ey.booking_service.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.ey.booking_service.controller.BookingControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="FlightServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ey.flight_service.FlightServiceApplication" />
-      <module name="flight-service" />
+    <configuration name="BookingControllerTest.createBooking_success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="booking-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.ey.flight_service.*" />
+          <option name="PATTERN" value="com.ey.booking_service.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="JourneyServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ey.journey_service.JourneyServiceApplication" />
-      <module name="journey-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ey.journey_service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
+      <option name="PACKAGE_NAME" value="com.ey.booking_service.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.ey.booking_service.controller.BookingControllerTest" />
+      <option name="METHOD_NAME" value="createBooking_success" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.JourneyServiceApplication" />
-        <item itemvalue="Application.BookingServiceApplication" />
-        <item itemvalue="Application.AuthServiceApplication" />
-        <item itemvalue="Application.FlightServiceApplication" />
-        <item itemvalue="Application.ApiGatewayApplication" />
+        <item itemvalue="JUnit.All in booking-service (3)" />
+        <item itemvalue="JUnit.BookingControllerTest" />
+        <item itemvalue="JUnit.All in booking-service (2)" />
+        <item itemvalue="JUnit.All in booking-service (1)" />
+        <item itemvalue="JUnit.BookingControllerTest.createBooking_success" />
       </list>
     </recent_temporary>
   </component>
