@@ -1,21 +1,27 @@
 package com.ey.booking_service.security;
 
+import com.ey.booking_service.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
-@Component
+@Slf4j
 @RequiredArgsConstructor
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -26,33 +32,45 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
-        System.out.println("Auth header: " +request.getHeader("Auth"));
+        String authHeader = request.getHeader("Authorization");
+        log.debug("Auth header: {}", authHeader);
 
-        if (header == null || !header.startsWith("Bearer ")) {
+        // ✅ Skip if no token
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = header.substring(7);
-        System.out.println(">>> Token Received" +token);
-
         try {
+            String token = authHeader.substring(7);
             String username = jwtUtil.extractUsername(token);
             String role = jwtUtil.extractRole(token);
-            System.out.println(">>> ROLE FROM TOKEN" +role);
 
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                    );
+            // ✅ Only set if not already authenticated
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                // 🔥 CRITICAL: ROLE_ prefix (MOST IMPORTANT)
+                List<SimpleGrantedAuthority> authorities =
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-        } catch (Exception e) {
-            SecurityContextHolder.clearContext();
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                authorities
+                        );
+
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                log.debug("User authenticated: {} with role {}", username, role);
+            }
+
+        } catch (Exception ex) {
+            log.error("JWT validation failed: {}", ex.getMessage());
         }
 
         filterChain.doFilter(request, response);

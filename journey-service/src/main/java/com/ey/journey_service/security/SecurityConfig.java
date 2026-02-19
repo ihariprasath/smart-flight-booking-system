@@ -39,12 +39,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/journeys/*/base-fare")
                         .hasAnyRole("USER", "ADMIN")
 
+                        .requestMatchers(HttpMethod.PUT, "/journeys/*/seats/release")
+                        .permitAll()
+
                         // ✅ ADMIN ONLY
                         .requestMatchers(HttpMethod.POST, "/journeys")
                         .hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.PUT, "/journeys/**")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("ADMIN","USER")
 
                         .requestMatchers(HttpMethod.DELETE, "/journeys/**")
                         .hasRole("ADMIN")

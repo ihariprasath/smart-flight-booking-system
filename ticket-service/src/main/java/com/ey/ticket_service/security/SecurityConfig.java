@@ -30,7 +30,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // USER generates ticket
-                        .requestMatchers("/tickets/generate")
+                        .requestMatchers("/tickets/generate/**")
+                        .hasRole("USER")
+
+                        .requestMatchers("/tickets/**")
                         .hasRole("USER")
 
                         // USER + ADMIN can view by booking

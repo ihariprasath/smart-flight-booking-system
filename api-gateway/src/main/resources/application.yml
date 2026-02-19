@@ -1,0 +1,78 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+          routes:
+
+            # AUTH SERVICE
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/auth/**
+
+            # FLIGHT SERVICE
+            - id: flight-service
+              uri: lb://FLIGHT-SERVICE
+              predicates:
+                - Path=/flights/**
+
+            # JOURNEY SERVICE
+            - id: journey-service
+              uri: lb://JOURNEY-SERVICE
+              predicates:
+                - Path=/journeys/**
+
+            # SEARCH SERVICE
+            - id: search-service
+              uri: lb://SEARCH-SERVICE
+              predicates:
+                - Path=/search/**
+
+            # BOOKING SERVICE
+            - id: booking-service
+              uri: lb://BOOKING-SERVICE
+              predicates:
+                - Path=/bookings/**
+
+            # PAYMENT SERVICE
+            - id: payment-service
+              uri: lb://PAYMENT-SERVICE
+              predicates:
+                - Path=/payments/**
+
+            # TICKET SERVICE
+            - id: ticket-service
+              uri: lb://TICKET-SERVICE
+              predicates:
+                - Path=/tickets/**
+
+            # PRICING SERVICE
+            - id: pricing-service
+              uri: lb://PRICING-SERVICE
+              predicates:
+                - Path=/pricing/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
