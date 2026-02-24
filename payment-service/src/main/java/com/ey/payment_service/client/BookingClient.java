@@ -13,10 +13,10 @@ public interface BookingClient {
     @GetMapping("/bookings/{id}")
     BookingResponse getBooking(@PathVariable Long id);
 
-    @PutMapping("/bookings/{bookingId}/confirm")
+    @PutMapping("/bookings/{id}/confirm")
     void confirmBooking(@PathVariable Long id);
 
-    @PutMapping("/bookings/{bookingId}/cancel")
+    @PutMapping("/bookings/{id}/cancel")
     void cancelBooking(@PathVariable Long id);
 
     @PutMapping("/bookings/{id}/fail")

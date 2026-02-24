@@ -29,10 +29,8 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(
-                                "/pricing/calculate",
-                                "/pricing/refund"
-                        ).hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/pricing/calculate").permitAll()
+                        .requestMatchers("/pricing/refund/**").permitAll()
 
                         .requestMatchers(
                                 "/pricing",

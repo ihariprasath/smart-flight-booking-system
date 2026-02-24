@@ -157,9 +157,9 @@ public class BookingService {
             throw new BookingException("Booking already cancelled");
         }
 
-        if(booking.getStatus() != BookingStatus.PENDING){
-            throw new BookingException("Only pending booking can be confirmed");
-        }
+//        if(booking.getStatus() != BookingStatus.PENDING){
+//            throw new BookingException("Only pending booking can be confirmed");
+//        }
 
         List<String> seatNumbers =
                 Arrays.asList(booking.getSeatNumbers().split(","));

@@ -112,7 +112,7 @@ class BookingServiceTest {
                 () -> bookingService.cancelBooking(1L)
         );
     }
-    
+
     @Test
     void getById_success() {
 

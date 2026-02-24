@@ -77,7 +77,8 @@ public class PaymentService {
                 bookingClient.failBooking(request.getBookingId());
             }
         } catch (Exception ex) {
-            log.error("Booking update failed: {}", ex.getMessage());
+            log.error("Booking update failed", ex);
+            throw new RuntimeException("Booking Confirmation failed");
         }
 
         return mapToResponse(payment);
